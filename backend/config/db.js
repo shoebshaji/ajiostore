@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect('mongodb+srv://fahad:crronaldino7@cluster0.cr3dt.mongodb.net/test', {
+        const conn = await mongoose.connect('mongodb+srv://shoeb:4453548@cluster0.z4kur.mongodb.net/test', {
             useUnifiedTopology: true,
             useNewUrlParser: true,
             useCreateIndex: true,
