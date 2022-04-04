@@ -1,71 +1,115 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Row, Col, Image, ListGroup, Card, Button, ListGroupItem } from 'react-bootstrap'
+import { Row, Col, Image, ListGroup, Card, Button, ListGroupItem, Form } from 'react-bootstrap'
 import Rating from '../components/Rating'
-import axios from 'axios'
+import {useDispatch,useSelector} from 'react-redux'
+import {listProductDetails} from '../actions/productActions'
+import Loader from '../components/Loader'
+import Message from '../components/Message'
 
-function ProductScreen({ match }) {
-    const [product, setProduct] = useState({})
+function ProductScreen({ history,match }) {
+
+    const [qty, setQty] = useState(1)
+
+    const dispatch = useDispatch()
+
+    const productDetails = useSelector(state=> state.productDetails)
+
+    const {loading,error,product} = productDetails
 
     useEffect(() => {
-        const fetchProduct = async () => {
-            const { data } = await axios.get(`/api/products/${match.params.id}`)
-
-            setProduct(data)
-        }
-        fetchProduct()
+        dispatch(listProductDetails(match.params.id))
+       
     }, [match])
+
+    const addToCartHandler = () => {
+        history.push(`/cart/${match.params.id}?qty=${qty}`)
+
+    }
 
 
   return (
     <>
     <Link className='btn btn-light' to='/'>Go Back</Link>
-    <Row>
-        <Col md={6}>
-            <Image src={product.image} alt={product.name} fluid />
-        </Col>
-        <Col md={3}>
-            <ListGroup variant='flush'>
-                <ListGroup.Item>
-                    <h3>{product.name}</h3>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <Rating value={product.rating} text={`${product.numReviews}`} />
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    price:₹ {product.price}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    Details: {product.description}
-                </ListGroup.Item>
-            </ListGroup>
-        </Col>
-        <Col md={3}>
-            <Card>
-                <ListGroup>
-                    <ListGroupItem>
-                        <Row>
-                            <Col>Price</Col>
-                            <Col>
-                                <strong>₹ {product.price}</strong>
-                            </Col>
-                        </Row>
-                    </ListGroupItem>
-                    <ListGroupItem>
-                        <Row>
-                            <Col>Status</Col>
-                            <Col>
-                                <strong> {product.countInStock > 0 ? 'In Stock' : 'Out of stock'}</strong>
-                            </Col>
-                        </Row>
-                    </ListGroupItem>
-                    <ListGroupItem>
-                       <Button className="btn-block" type='button' disabled={product.countInStock === 0}>Add To Cart</Button>
-                    </ListGroupItem>
-                </ListGroup>
-            </Card>
-        </Col>
-    </Row>
+    {loading ? <Loader />
+            :error ? <Message variant='danger'>{error}</Message>
+            : (
+                <Row>
+                <Col md={6}>
+                    <Image src={product.image} alt={product.name} fluid />
+                </Col>
+                <Col md={3}>
+                    <ListGroup variant='flush'>
+                        <ListGroup.Item>
+                            <h3>{product.name}</h3>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Rating value={product.rating} text={`${product.numReviews}`} />
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            price:₹ {product.price}
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            Details: {product.description}
+                        </ListGroup.Item>
+                    </ListGroup>
+                </Col>
+                <Col md={3}>
+                    <Card>
+                        <ListGroup>
+                            <ListGroupItem>
+                                <Row>
+                                    <Col>Price</Col>
+                                    <Col>
+                                        <strong>₹ {product.price}</strong>
+                                    </Col>
+                                </Row>
+                            </ListGroupItem>
+                            <ListGroupItem>
+                                <Row>
+                                    <Col>Status</Col>
+                                    <Col>
+                                        <strong> {product.countInStock > 0 ? 'In Stock' : 'Out of stock'}</strong>
+                                    </Col>
+                                </Row>
+                            </ListGroupItem>
+
+                            {/* ---- */}
+                            <ListGroupItem>
+                                <Row>
+                                    <Col>Quantity</Col>
+                                    <Col>
+                                    <Form.Control as='select' value={qty} onChange={(e)=> setQty(e.target.value)}>
+                                        {[...Array(product.countInStock).keys()]
+                                            .map((x)=> (
+                                                <option key={x+1} value={x+1}>
+                                                    {x+1}
+                                                </option>
+                                            ))
+                                        
+                                        }
+
+                                    </Form.Control>
+                                    </Col>
+                                </Row>
+
+
+
+                            </ListGroupItem>
+
+
+                            <ListGroupItem>
+                               <Button onClick={addToCartHandler} className="btn-block" type='button' disabled={product.countInStock === 0}>Add To Cart</Button>
+                            </ListGroupItem>
+                        </ListGroup>
+                    </Card>
+                </Col>
+            </Row>
+
+            )
+
+}
+   
         
 
     </>
