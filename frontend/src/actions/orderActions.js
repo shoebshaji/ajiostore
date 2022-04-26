@@ -44,20 +44,19 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
 
         }
 
-        const { data } = await axios.post(`/api/orders/${id}`, config)
+        const { data } = await axios.get(`/api/orders/${id}`, config)
 
         dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data})
 
 
     } catch (error) {
-        const message = error.response && error.response.data.message
-                        ? error.response.data.message
-                        : error.message
-        
-        if(message === 'Not authorized, Token Failed') {
-            dispatch(logout())
-        }
-        dispatch({ type:ORDER_DETAILS_FAIL, payload: message })
+        dispatch({
+            type: ORDER_DETAILS_FAIL,
+            payload:
+              error.response && error.response.data.message
+                ? error.response.data.message
+                : error.message
+        })   
         
     }
 }
@@ -79,13 +78,13 @@ export const payOrder = (orderId, paymentResult) => async (dispatch, getState) =
 
         dispatch({ type: ORDER_PAY_SUCCESS, payload: data })
     } catch (error) {
-        const message = error.response && error.response.data.message
-                            ? error.response.data.message
-                            : error.message
-        if(message === 'Not authorised, Token Failed') {
-            dispatch( logout() )
-        }  
-        dispatch({ type: ORDER_PAY_FAIL, payload: message }) 
+        dispatch({
+            type: ORDER_PAY_FAIL,
+            payload:
+              error.response && error.response.data.message
+                ? error.response.data.message
+                : error.message,
+        })
     }
 } 
 

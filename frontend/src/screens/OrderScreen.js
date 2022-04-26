@@ -39,7 +39,7 @@ import React, { useState, useEffect } from 'react'
          }
 
          order.itemsPrice = addDecimals(
-             order.itemsPrice.reduce((acc, item) => acc + item.price * item.qty, 0)
+             order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
          )
      }
 

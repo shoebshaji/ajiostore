@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
  import { useDispatch, useSelector } from 'react-redux'
  import Message from '../components/Message'
  import Loader from '../components/Loader'
- // import Paginate from '../components/Paginate'
+ import Paginate from '../components/Paginate'
  import {
    listProducts,
    deleteProduct,
@@ -129,7 +129,7 @@ import React, { useEffect } from 'react'
                ))}
              </tbody>
            </Table>
-           {/* <Paginate pages={pages} page={page} isAdmin={true} /> */}
+           <Paginate pages={pages} page={page} isAdmin={true} />
          </>
        )}
      </>
